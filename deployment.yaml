@@ -1,0 +1,24 @@
+apiVersion : apps/v1
+kind : Deployment
+metadata:
+  name: mi-servidor
+
+spec: 
+ replicas: 3
+ selector:
+  matchLabels:
+    app: mi-servidor
+
+  template:
+    metadata:
+      labels:
+        app: mi-servidor
+  
+    spec:
+      containers:
+        - name: mi-servidor
+          image: coder-backend3
+          ports:
+            - containersPorts: 8000
+
+# instalar kubernetes d

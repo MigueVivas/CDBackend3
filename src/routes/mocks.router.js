@@ -18,6 +18,15 @@ router.get('/mockingusers', (req, res) => {
   }
 });
 
+router.get('/mockinpets', (req, res) => {
+  try {
+    const users = generateMockPets(50);
+    res.status(200).json({ status: 'success', payload: users });
+  } catch (error) {
+    res.status(500).json({ status: 'error', error: error.message });
+  }
+});
+
 router.post('/generateData', async (req, res) => {
   const { users = 0, pets = 0 } = req.body;
 
