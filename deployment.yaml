@@ -20,5 +20,3 @@ spec:
           image: coder-backend3
           ports:
             - containersPorts: 8000
-
-# instalar kubernetes d
