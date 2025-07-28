@@ -1,5 +1,4 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 
 import usersRouter from './routes/users.router.js';
@@ -9,8 +8,6 @@ import sessionsRouter from './routes/sessions.router.js';
 import mocksRouter from './routes/mocks.router.js';
 
 const app = express();
-
-mongoose.connect(`URL DE MONGO`);
 
 app.use(express.json());
 app.use(cookieParser());

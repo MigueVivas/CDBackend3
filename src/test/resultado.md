@@ -1,4 +1,4 @@
-Resultado test "adoptions.router.test.js"
+*** Resultado test "adoptions.controller.test.js" ***
 Adoptions Controller - Unit
 
 Este conjunto de tests unitarios se enfoca en verificar la funcionalidad individual de los métodos dentro del controlador de adopciones, asegurando que cada operación se comporte como se espera bajo diversas condiciones.
@@ -33,3 +33,93 @@ Notas: Asegura que se previene la adopción de una mascota que ya está asignada
 Conclusión:
 
 Todos los tests unitarios para el controlador de adopciones han pasado exitosamente, lo que indica que la lógica implementada para cada uno de los métodos probados funciona según lo esperado y maneja correctamente los diferentes escenarios (éxito, datos no encontrados, datos inválidos). Esto proporciona una buena base de confianza en la estabilidad y corrección de las funcionalidades del controlador.
+
+
+*** Resultado 1- test "adoptions.router.test.js" ***
+
+Este conjunto de tests de integración verifica la interacción de las rutas del router de adopciones con la aplicación real, incluyendo la base de datos (si aplica).
+
+Resumen de Ejecución:
+
+    Total de Pruebas Ejecutadas: 2 (ganchos before all y after all que fallaron)
+
+    Pruebas Pasadas: 0
+
+    Pruebas Fallidas: 2
+
+    Tiempo Total: 4 ms
+
+Advertencias y Errores Detectados:
+
+Advertencia de Deprecación de Mongoose:
+
+    (node:20464) [MONGOOSE] DeprecationWarning: Mongoose: the strictQuery option will be switched back to false by default in Mongoose 7. Use mongoose.set('strictQuery', false); if you want to prepare for this change. Or use mongoose.set('strictQuery', true); to suppress this warning.
+
+        Notas: Esta es una advertencia de Mongoose que indica un cambio próximo en el comportamiento de la opción strictQuery en la versión 7. No es un error crítico que detenga la ejecución, pero es recomendable abordarlo para evitar posibles problemas en el futuro. Se sugiere agregar mongoose.set('strictQuery', false); o mongoose.set('strictQuery', true); en la configuración inicial de Mongoose para suprimirla.
+
+Errores en la Ejecución de Tests:
+- Descripción del Error: "before all" hook for "GET /api/adoptions devuelve lista de adopciones".
+  Tipo de Error: chai.request is not a function
+  Ubicación del Error: file:///C:/Users/saviv/.../src/test/adoptions.router.test.js:13:22
+  Notas: Este error indica que la función chai.request no está disponible cuando se intenta usar en el gancho before all. Sugiere un problema en la inicialización o integración de chai-http con chai en el entorno de ES Modules. Es el mismo error recurrente en intentos anteriores.
+
+- Descripción del Error: "after all" hook for "POST /api/adoptions/:uid/:pid crea una nueva adopción".
+Tipo de Error: Cannot read properties of undefined (reading 'close').
+Ubicación del Error: file:///C:/Users/saviv/.../src/test/adoptions.router.test.js:17:15
+Notas: Este error ocurre en el gancho after all y sugiere que se está intentando llamar al método close() sobre un objeto que es undefined. Esto es común si la conexión a la base de datos o el servidor de la aplicación (que debería cerrarse al final de los tests) no se inicializó correctamente o la variable que lo referencia no está definida en el ámbito esperado.
+
+*** Resultado 2- test "adoptions.router.test.js" ***
+
+Este conjunto de tests de integración verifica la interacción de las rutas del router de adopciones con la aplicación real y la base de datos.
+
+Resumen de Ejecución:
+
+    Total de Pruebas Esperadas: Aproximadamente 5 (1 pasada, 1 pendiente, 2 fallidas, 1 implícitamente pasada por el console.log del test)
+
+    Pruebas Pasadas: 3
+
+    Pruebas Fallidas: 2
+
+    Pruebas Pendientes: 1
+
+    Tiempo Total: 10s
+
+    Conexión a MongoDB: Éxito.
+
+    Conexión a MongoDB para testing: Éxito.
+
+    Conexión a MongoDB cerrada: Éxito al finalizar.
+
+Detalle de las Pruebas y Errores:
+
+- GET /api/adoptions devuelve lista de adopciones.
+  Estado: PASSED.
+  Notas: La prueba inicial para obtener todas las adopciones pasó exitosamente.
+    Logs:
+    Ejecutando: GET /api/adoptions <br> Status recibido: 200 <br> Body recibido: { "status": "success", "payload": [] } <br> Test GET /api/adoptions completado
+- POST /api/adoptions/:uid/:pid crea una nueva adopción.
+  Estado: PASSED
+  Notas: La prueba de creación de adopción pasó, aunque la creación real resultó en un 404. Esto significa que la aserción de la prueba probablemente esperaba un 404 en este escenario, o la prueba está configurada para pasar si la respuesta coincide con lo esperado, incluso si es un error. <br> Logs:
+    Ejecutando: POST /api/adoptions con IDs: { userId: '6886d998c6271379e881087a', petId: '6886d998c6271379e881087b' } <br> Status recibido: 404 <br> Body recibido: { "status": "error", "error": "user Not found" } <br> Test POST /api/adoptions completado
+- GET /api/adoptions/:aid con ID válido
+  Estado: PENDING
+  Notas: Error: Pending { message: 'sync skip; aborting execution' } <br> Esta prueba se marcó como "pendiente" o "saltada". El log "No se pudo crear adopción, saltando test específico" indica que la condición previa para esta prueba (probablemente la creación exitosa de una adopción) no se cumplió. Es probable que, al recibir un 404 para la creación inicial, el test subsecuente que depende de esa adopción creada se haya omitido intencionalmente. Esto es un buen manejo de dependencias en tus tests.
+- GET /api/adoptions/:aid con ID inválido devuelve error.
+  Estado: FAILED
+  Notas: Error: Timeout of 5000ms exceeded. <br> La prueba superó el tiempo límite de 5 segundos. <br> Log: Ejecutando: GET /api/adoptions/invalid-id <br> Esto sugiere que tu API no está respondiendo con un error (ej. 400 Bad Request) o una respuesta de 404 dentro del tiempo esperado cuando se le proporciona un ID con formato incorrecto, o el test no está manejando correctamente la finalización (llamando a done() o resolviendo una promesa).
+- GET /api/adoptions/:aid con ID que no existe.
+  Estado: PASSED
+  Notas: La prueba para IDs que no existen pasó exitosamente.
+    Logs:
+    Ejecutando: GET /api/adoptions/6886d99dc6271379e8810881 <br> Status recibido: 404 <br> Body recibido: { "status": "error", "error": "Adoption not found" } <br> Test ID inexistente completado <br> Este es el comportamiento esperado: la API devuelve 404 si el ID tiene el formato correcto pero el recurso no existe.
+- POST /api/adoptions/:uid/:pid con IDs inválidos.
+  Estado: FAILED
+  Notas: Error: Timeout of 5000ms exceeded. <br> Similar al timeout anterior, esta prueba para crear una adopción con IDs de usuario/mascota inválidos se colgó. <br> Log: Ejecutando: POST con IDs inválidos <br> Indica que la API no está manejando rápidamente las solicitudes de creación con datos inválidos, lo que puede causar que el test se quede esperando y exceda el tiempo límite. Deberías esperar una respuesta rápida (ej. 400 Bad Request) para estos escenarios.
+
+Advertencias y Deprecaciones:
+
+    Advertencia de Deprecación de Mongoose:
+
+        Mongoose: the \strictQuery` option will be switched back to `false` by default in Mongoose 7. Use `mongoose.set('strictQuery', false);` if you want to prepare for this change. Or use `mongoose.set('strictQuery', true);` to suppress this warning.`
+
+        Notas: Esta es una advertencia de Mongoose que indica un cambio próximo en el comportamiento de la opción strictQuery. Es una buena práctica agregar mongoose.set('strictQuery', false); o mongoose.set('strictQuery', true); en tu configuración de conexión a Mongoose para suprimirla y prepararte para futuras versiones.
