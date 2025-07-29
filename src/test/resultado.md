@@ -123,3 +123,101 @@ Advertencias y Deprecaciones:
         Mongoose: the \strictQuery` option will be switched back to `false` by default in Mongoose 7. Use `mongoose.set('strictQuery', false);` if you want to prepare for this change. Or use `mongoose.set('strictQuery', true);` to suppress this warning.`
 
         Notas: Esta es una advertencia de Mongoose que indica un cambio próximo en el comportamiento de la opción strictQuery. Es una buena práctica agregar mongoose.set('strictQuery', false); o mongoose.set('strictQuery', true); en tu configuración de conexión a Mongoose para suprimirla y prepararte para futuras versiones.
+
+*** Resultado 3- test "adoptions.router.test.js" y "adoptions.controller.test.js" ***
+
+Adoptions Router - Integración
+
+Conexión a la Base de Datos
+    Conectado a MongoDB
+    Conectado a MongoDB para testing
+    Conexión a MongoDB cerrada
+
+Pruebas de Endpoints
+
+- GET /api/adoptions
+    Descripción: Recupera una lista de todas las adopciones.
+    Ejecución: GET /api/adoptions
+    Status Recibido: 200
+    Body Recibido:
+      {
+      "status": "success",
+      "payload": []
+      }
+    Resultado: ✔ GET /api/adoptions devuelve lista de adopciones (50ms)
+    Estado: PASSED
+
+- POST /api/adoptions/:uid/:pid
+    Descripción: Crea una nueva adopción.
+        * Caso 1: Usuario no encontrado
+            Ejecución: POST /api/adoptions con IDs:
+              {
+                "userId": "688823ef7900c0750e1c4c18",
+                "petId": "688823ef7900c0750e1c4c19"
+              }
+            Status Recibido: 404
+            Body Recibido:
+            {
+              "status": "error",
+              "error": "user Not found"
+            }
+            Resultado: ✔ POST /api/adoptions/:uid/:pid crea una nueva adopción
+            Estado: PASSED (aunque el resultado fue un error esperado)
+        * Caso 2: IDs inválidos
+            Ejecución: POST con IDs inválidos
+            Status Recibido: 400
+            Body Recibido:
+              {
+                "status": "error",
+                "error": "Invalid u ID format"
+              }
+            Resultado: ✔ POST /api/adoptions/:uid/:pid con IDs inválidos
+            Estado: PASSED
+
+- GET /api/adoptions/:aid
+    Descripción: Recupera una adopción por su ID.
+        * Caso 1: ID válido (SKIP)
+            Ejecución: Creando adopción para test...
+            Resultado Creación: 404 { status: 'error', error: 'user Not found' }
+            Mensaje: No se pudo crear adopción, saltando test específico
+            Error: Pending { message: 'sync skip; aborting execution' }
+            Resultado: GET /api/adoptions/:aid con ID válido
+            Estado: PENDING (salteado debido a error de prerrequisito)
+
+        * Caso 2: ID inválido
+            Ejecución: GET /api/adoptions/invalid-id
+            Status Recibido: 400
+            Body Recibido:
+              {
+                "status": "error",
+                "error": "Invalid a ID format"
+              }
+            Resultado: ✔ GET /api/adoptions/:aid con ID inválido devuelve error
+            Estado: PASSED
+        
+        * Caso 3: ID inexistente
+            Ejecución: GET /api/adoptions/688823ef7900c0750e1c4c1e
+            Status Recibido: 404
+            Body Recibido:
+              {
+                "status": "error",
+                "error": "Adoption not found"
+              }
+            Resultado: ✔ GET /api/adoptions/:aid con ID que no existe
+            Estado: PASSED
+
+Adoptions Controller - Unitario
+
+Pruebas de Métodos
+    ✔ getAllAdoptions devuelve lista de adopciones
+    ✔ getAdoption retorna una adopción por ID
+    ✔ getAdoption responde 404 si no se encuentra
+    ✔ createAdoption crea una adopción exitosamente
+    ✔ createAdoption responde 404 si no existe el usuario
+    ✔ createAdoption responde 404 si no existe la mascota
+    ✔ createAdoption responde 400 si la mascota ya está adoptada
+
+Resumen General
+    12 pruebas pasadas
+    1 prueba pendiente
+    Tiempo Total: 172ms

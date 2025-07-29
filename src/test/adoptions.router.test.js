@@ -123,7 +123,7 @@ describe("Adoptions Router - Integration", () => {
     }
   });
   
-  it("GET /api/adoptions/:aid con ID inválido devuelve error", async function() {
+ it("GET /api/adoptions/:aid con ID inválido devuelve error", async function() {
     this.timeout(5000);
     
     try {
@@ -135,14 +135,16 @@ describe("Adoptions Router - Integration", () => {
       console.log('Status recibido:', res.status);
       console.log('Body recibido:', JSON.stringify(res.body, null, 2));
       
-      expect([400, 404, 422, 500]).to.include(res.status);
+      expect(res.status).to.equal(400);
+      expect(res.body).to.have.property("status", "error");
+      expect(res.body).to.have.property("error");
       
       console.log('Test ID inválido completado');
     } catch (error) {
       console.error('Error en GET con ID inválido:', error);
       throw error;
     }
-  });
+});
   
   it("GET /api/adoptions/:aid con ID que no existe", async function() {
     this.timeout(5000);
@@ -179,12 +181,14 @@ describe("Adoptions Router - Integration", () => {
       console.log('Status recibido:', res.status);
       console.log('Body recibido:', JSON.stringify(res.body, null, 2));
       
-      expect([400, 404, 422, 500]).to.include(res.status);
+      expect(res.status).to.equal(400);
+      expect(res.body).to.have.property("status", "error");
+      expect(res.body).to.have.property("error");
       
       console.log('Test IDs inválidos completado');
     } catch (error) {
       console.error('Error en POST con IDs inválidos:', error);
       throw error;
     }
-  });
+});
 });
